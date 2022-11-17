@@ -4,7 +4,9 @@ import {MongoClient} from "mongodb";
 import joi from "joi";
 import dotenv from "dotenv";
 
-import { postParticipant } from "./controllers/user.controller";
+import { postParticipantSignUp,
+    postParticipantSignIn 
+} from "./controllers/user.controller";
 
 export const userSignUpSchema = joi.object({
     name: joi.string().min(3).required(),
@@ -24,9 +26,13 @@ const mongoClient = new MongoClient(process.env.MONGO_URI);
 await mongoClient.connect();
 
 const db = mongoClient.db("myWallet");
-export const signUp = db.collection("signUps");
+export const users = db.collection("users");
+export const sessions = db.collection("sessions");
 
-app.post("/participants", postParticipant);
+
+app.post("/participants", postParticipantSignUp);
+
+app.post("/participants", postParticipantSignIn);
 
 
 app.listen(5000, ()=> {
