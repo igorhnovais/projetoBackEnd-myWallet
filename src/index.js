@@ -6,13 +6,13 @@ import dotenv from "dotenv";
 
 import { postParticipantSignUp,
     postParticipantSignIn 
-} from "./controllers/user.controller";
+} from "./controllers/user.controller.js";
 
 export const userSignUpSchema = joi.object({
     name: joi.string().min(3).required(),
     email: joi.string().email().required(),
     password: joi.string().required(),
-    confirmPassword: joi.string().required()
+    confirmPassword: joi.ref("password")
 });
  
 
@@ -30,9 +30,9 @@ export const users = db.collection("users");
 export const sessions = db.collection("sessions");
 
 
-app.post("/participants", postParticipantSignUp);
+app.post("/sign-up", postParticipantSignUp);
 
-app.post("/participants", postParticipantSignIn);
+app.post("/sign-in", postParticipantSignIn);
 
 
 app.listen(5000, ()=> {

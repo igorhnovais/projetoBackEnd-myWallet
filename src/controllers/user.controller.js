@@ -11,6 +11,8 @@ export async function postParticipantSignUp (req, res){
 
     const infoUser = req.body;
 
+    try{
+
     const userExists = await users.findOne({ email: infoUser.email });
 
     if (userExists) {
@@ -26,9 +28,12 @@ export async function postParticipantSignUp (req, res){
 
     const passwordHash = bcrypt.hashSync(infoUser.password, 12);
 
-    try{
+    delete infoUser.confirmPassword;
+
+    
         await users.insertOne({...infoUser, password: passwordHash});
         res.send(201);
+
     } catch (err){
         console.log(err);
         res.status(500).send('Server not running');
@@ -40,7 +45,10 @@ export async function postParticipantSignIn (req, res){
 
     const token = uuid();
 
-    const userExist = users.findOne({email})
+    try{
+        
+    const userExist = await users.findOne({email})
+    console.log(userExist);
 
     if(!userExist){
         return res.sendStatus(401);
@@ -55,11 +63,10 @@ export async function postParticipantSignIn (req, res){
     const userSession = await sessions.findOne({userId: userExist._id});
 
     if(userSession){
-        return res.status(401)
-        .send({ message: "Você já está logado, sai para logar novamente" });
-    }
+        return res
+        .send(userSession.token);
+    } 
 
-    try{
         await sessions.insertOne({
             userId: userExist._id,
             token
