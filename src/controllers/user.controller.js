@@ -24,6 +24,7 @@ export async function postParticipantSignUp (req, res){
     if(error){
         const errors = error.details.map(detail => detail.message);
         return res.status(422).send(errors);
+
     }
 
     const passwordHash = bcrypt.hashSync(infoUser.password, 12);
@@ -46,7 +47,7 @@ export async function postParticipantSignIn (req, res){
     const token = uuid();
 
     try{
-        
+
     const userExist = await users.findOne({email})
     console.log(userExist);
 
@@ -63,8 +64,7 @@ export async function postParticipantSignIn (req, res){
     const userSession = await sessions.findOne({userId: userExist._id});
 
     if(userSession){
-        return res
-        .send(userSession.token);
+        return res.send(userSession.token);
     } 
 
         await sessions.insertOne({
@@ -72,7 +72,7 @@ export async function postParticipantSignIn (req, res){
             token
         });
 
-        res.send({token});
+        res.send(token);
 
     } catch (err) {
         console.log(err);
