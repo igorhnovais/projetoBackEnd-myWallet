@@ -2,7 +2,9 @@ import express from "express";
 import cors from "cors";
 import joi from "joi";
 
-import usersRouters from "./routes/user.route.js"
+import usersRouters from "./routes/user.route.js";
+
+import transactionRouters from "./routes/transactions.route.js"
 
 
 export const userSignUpSchema = joi.object({
@@ -11,12 +13,18 @@ export const userSignUpSchema = joi.object({
     password: joi.string().required(),
     confirmPassword: joi.ref("password")
 });
+
+export const entryExitSchema = joi.object({
+    value: joi.number().required(),
+    description: joi.string().required().min(4).max(100)
+})
  
 
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use(usersRouters)
+app.use(usersRouters);
+app.use(transactionRouters);
 
 
 

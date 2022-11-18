@@ -3,9 +3,9 @@ import {v4 as uuid} from "uuid";
 
 import {userSignUpSchema} from "../index.js";
 
-import { users,
-        sessions 
-} from "../database/db";
+import { usersColletion,
+        sessionsCollection 
+} from "../database/db.js";
 
 export async function postParticipantSignUp (req, res){
 
@@ -13,7 +13,7 @@ export async function postParticipantSignUp (req, res){
 
     try{
 
-    const userExists = await users.findOne({ email: infoUser.email });
+    const userExists = await usersColletion.findOne({ email: infoUser.email });
 
     if (userExists) {
         return res.status(409).send({ message: "Esse email já existe" });
@@ -32,7 +32,7 @@ export async function postParticipantSignUp (req, res){
     delete infoUser.confirmPassword;
 
     
-        await users.insertOne({...infoUser, password: passwordHash});
+        await usersColletion.insertOne({...infoUser, password: passwordHash});
         res.send(201);
 
     } catch (err){
@@ -48,7 +48,7 @@ export async function postParticipantSignIn (req, res){
 
     try{
 
-    const userExist = await users.findOne({email})
+    const userExist = await usersColletion.findOne({email})
     console.log(userExist);
 
     if(!userExist){
@@ -61,13 +61,13 @@ export async function postParticipantSignIn (req, res){
         return res.sendStatus(401); 
     }
 
-    const userSession = await sessions.findOne({userId: userExist._id});
+    const userSession = await sessionsCollection.findOne({userId: userExist._id});
 
     if(userSession){
         return res.send(userSession.token);
     } 
 
-        await sessions.insertOne({
+        await sessionsCollection.insertOne({
             userId: userExist._id,
             token
         });
