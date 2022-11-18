@@ -15,7 +15,7 @@ export const userSignUpSchema = joi.object({
 });
 
 export const entryExitSchema = joi.object({
-    value: joi.number().required(),
+    value: joi.string().required(),
     description: joi.string().required().min(4).max(100)
 })
  

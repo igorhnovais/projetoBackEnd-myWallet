@@ -1,4 +1,6 @@
 import {entryExitSchema} from "../index.js";
+import dayjs from "dayjs";
+
 
 import { transactionsCollection,
         sessionsCollection, 
@@ -10,6 +12,7 @@ export async function postTransactionEntry(req, res){
 
     const {value, description} = req.body;
     const infoUser = req.body;
+    const day = dayjs().format("DD/MM");
 
     const { authorization } = req.headers;
 
@@ -39,7 +42,8 @@ export async function postTransactionEntry(req, res){
             userId: user._id, 
             type: "entry",
             value,
-            description
+            description,
+            day
         }
 
 
@@ -58,6 +62,7 @@ export async function postTransactionExit(req, res){
 
     const {value, description} = req.body;
     const infoUser = req.body;
+    const day = dayjs().format("DD/MM");
 
     const { authorization } = req.headers;
 
@@ -87,7 +92,8 @@ export async function postTransactionExit(req, res){
             userId: user._id, 
             type: "exit",
             value,
-            description
+            description,
+            day
         }
 
         await transactionsCollection.insertOne(exit);
@@ -112,8 +118,8 @@ export async function getTransactions(req, res){
 
     try{
         const sessions = await sessionsCollection.findOne({token});
-
-        const transactions = await transactionsCollection.find({ _id: sessions?.userId}).toArray();
+        
+        const transactions = await transactionsCollection.find({userId: sessions.userId}).toArray();
         
         res.send(transactions);
 
