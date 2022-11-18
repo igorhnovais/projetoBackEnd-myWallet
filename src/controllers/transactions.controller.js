@@ -118,10 +118,13 @@ export async function getTransactions(req, res){
 
     try{
         const sessions = await sessionsCollection.findOne({token});
+
+        let user = await usersColletion.findOne({_id: sessions.userId});
+        user = user.name;
         
         const transactions = await transactionsCollection.find({userId: sessions.userId}).toArray();
         
-        res.send(transactions);
+        res.send({transactions, user});
 
     } catch (err){
         console.log(err);
