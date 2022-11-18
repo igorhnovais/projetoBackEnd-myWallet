@@ -5,7 +5,7 @@ import {userSignUpSchema} from "../index.js";
 
 import { users,
         sessions 
-} from "../index.js";
+} from "../database/db";
 
 export async function postParticipantSignUp (req, res){
 

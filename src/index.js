@@ -1,12 +1,9 @@
 import express from "express";
 import cors from "cors";
-import {MongoClient} from "mongodb";
 import joi from "joi";
-import dotenv from "dotenv";
 
-import { postParticipantSignUp,
-    postParticipantSignIn 
-} from "./controllers/user.controller.js";
+import usersRouters from "./routes/user.route.js"
+
 
 export const userSignUpSchema = joi.object({
     name: joi.string().min(3).required(),
@@ -16,23 +13,11 @@ export const userSignUpSchema = joi.object({
 });
  
 
-dotenv.config();
-
 const app = express();
 app.use(cors());
 app.use(express.json());
+app.use(usersRouters)
 
-const mongoClient = new MongoClient(process.env.MONGO_URI);
-await mongoClient.connect();
-
-const db = mongoClient.db("myWallet");
-export const users = db.collection("users");
-export const sessions = db.collection("sessions");
-
-
-app.post("/sign-up", postParticipantSignUp);
-
-app.post("/sign-in", postParticipantSignIn);
 
 
 app.listen(5000, ()=> {
