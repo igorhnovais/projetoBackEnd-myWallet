@@ -101,4 +101,24 @@ export async function postTransactionExit(req, res){
 }
 
 
+export async function getTransactions(req, res){
+    const { authorization } = req.headers;
 
+    const token = authorization?.replace("Bearer ", "");
+
+    if (!token){
+        return res.sendStatus(401);
+    }
+
+    try{
+        const sessions = await sessionsCollection.findOne({token});
+
+        const transactions = await transactionsCollection.find({ _id: sessions?.userId}).toArray();
+        
+        res.send(transactions);
+
+    } catch (err){
+        console.log(err);
+        res.status(500).send('Server not running');
+    }
+}

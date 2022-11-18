@@ -7,6 +7,6 @@ const router = Router();
 
 router.post("/new-entry", postTransactionEntry);
 
-router.post("/nem-exit", postTransactionExit);
+router.post("/new-exit", postTransactionExit);
 
 export default router;
