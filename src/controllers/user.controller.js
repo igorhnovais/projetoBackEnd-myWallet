@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import {v4 as uuid} from "uuid";
 
-import {userSignUpSchema} from "../index.js";
+import {userSignUpSchema} from "../models/user.models.js";
 
 import { usersColletion,
         sessionsCollection 

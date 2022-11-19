@@ -1,26 +1,21 @@
-import {entryExitSchema} from "../index.js";
 import dayjs from "dayjs";
 
+import {entryExitSchema} from "../models/entryExit.models.js";
 
 import { transactionsCollection,
         sessionsCollection, 
         usersColletion
-    } from "../database/db.js";
+} from "../database/db.js";
 
 
 export async function postTransactionEntry(req, res){
 
     const {value, description} = req.body;
     const infoUser = req.body;
+    const user = req.user;
+
     const day = dayjs().format("DD/MM");
 
-    const { authorization } = req.headers;
-
-    const token = authorization?.replace("Bearer ", "");
-
-    if (!token) {
-        return res.sendStatus(401);
-    }
 
     const {error} = entryExitSchema.validate(infoUser, {abortEarly: false});
 
@@ -30,14 +25,7 @@ export async function postTransactionEntry(req, res){
     }
 
     try{
-        const sessions = await sessionsCollection.findOne({token});
-
-        if(!sessions){
-            return res.sendStatus(401);
-        }
-
-        const user = await usersColletion.findOne({ _id: sessions.userId});
-
+        
         const entry = {
             userId: user._id, 
             type: "entry",
@@ -45,7 +33,6 @@ export async function postTransactionEntry(req, res){
             description,
             day
         }
-
 
         await transactionsCollection.insertOne(entry);
 
@@ -62,15 +49,10 @@ export async function postTransactionExit(req, res){
 
     const {value, description} = req.body;
     const infoUser = req.body;
+    const user = req.user;
+
     const day = dayjs().format("DD/MM");
 
-    const { authorization } = req.headers;
-
-    const token = authorization?.replace("Bearer ", "");
-
-    if (!token) {
-        return res.sendStatus(401);
-    }
 
     const {error} = entryExitSchema.validate(infoUser, {abortEarly: false});
 
@@ -80,14 +62,6 @@ export async function postTransactionExit(req, res){
     }
 
     try{
-        const sessions = await sessionsCollection.findOne({token});
-
-        if(!sessions){
-            return res.sendStatus(401);
-        }
-
-        const user = await usersColletion.findOne({ _id: sessions.userId});
-
         const exit = {
             userId: user._id, 
             type: "exit",
