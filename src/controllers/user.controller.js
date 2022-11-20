@@ -7,6 +7,7 @@ import { usersColletion,
         sessionsCollection 
 } from "../database/db.js";
 
+
 export async function postParticipantSignUp (req, res){
 
     const infoUser = req.body;
@@ -48,24 +49,23 @@ export async function postParticipantSignIn (req, res){
 
     try{
 
-    const userExist = await usersColletion.findOne({email})
-    console.log(userExist);
+        const userExist = await usersColletion.findOne({email})
 
-    if(!userExist){
-        return res.sendStatus(401);
-    }
+        if(!userExist){
+            return res.sendStatus(401);
+        }
 
-    const passwordOk = bcrypt.compareSync(password, userExist.password);
+        const passwordOk = bcrypt.compareSync(password, userExist.password);
 
-    if(!passwordOk){
-        return res.sendStatus(401); 
-    }
+        if(!passwordOk){
+            return res.sendStatus(401); 
+        }
 
-    const userSession = await sessionsCollection.findOne({userId: userExist._id});
+        const userSession = await sessionsCollection.findOne({userId: userExist._id});
 
-    if(userSession){
-        return res.send(userSession.token);
-    } 
+        if(userSession){
+            return res.send(userSession.token);
+        } 
 
         await sessionsCollection.insertOne({
             userId: userExist._id,
@@ -77,5 +77,26 @@ export async function postParticipantSignIn (req, res){
     } catch (err) {
         console.log(err);
         res.sendStatus(500);
+    }
+};
+
+export async function deleteParticipantSession (req, res){
+
+    const { authorization } = req.headers;
+
+    const token = authorization?.replace("Bearer ", "");
+
+
+    if (!token){
+        return res.sendStatus(401);
+    }
+
+    try{
+        await sessionsCollection.deleteOne({token: token});
+        res.sendStatus(200);
+
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: err.message });
     }
 };
