@@ -42,7 +42,7 @@ export async function postTransactionEntry(req, res){
         console.log(err);
         res.status(500).send('Server not running');
     }
-}
+};
 
 
 export async function postTransactionExit(req, res){
@@ -78,7 +78,7 @@ export async function postTransactionExit(req, res){
         console.log(err);
         res.status(500).send('Server not running');
     }
-}
+};
 
 
 export async function getTransactions(req, res){
@@ -104,4 +104,4 @@ export async function getTransactions(req, res){
         console.log(err);
         res.status(500).send('Server not running');
     }
-}
+};

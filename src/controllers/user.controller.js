@@ -34,13 +34,13 @@ export async function postParticipantSignUp (req, res){
 
     
         await usersColletion.insertOne({...infoUser, password: passwordHash});
-        res.send(201);
+        res.sendStatus(201);
 
     } catch (err){
         console.log(err);
         res.status(500).send('Server not running');
     }
-}
+};
 
 export async function postParticipantSignIn (req, res){
     const {email, password} = req.body;
