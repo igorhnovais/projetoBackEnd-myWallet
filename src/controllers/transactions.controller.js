@@ -4,8 +4,10 @@ import {entryExitSchema} from "../models/entryExit.models.js";
 
 import { transactionsCollection,
         sessionsCollection, 
-        usersColletion
+        usersColletion,
 } from "../database/db.js";
+
+import {redis, EXPIRATION} from "../database/redis.js"
 
 
 export async function postTransactionEntry(req, res){
@@ -95,13 +97,21 @@ export async function getTransactions(req, res){
 
         let user = await usersColletion.findOne({_id: sessions.userId});
         user = user.name;
+
+        const key = "transactions"
+        const cachedInfos = await redis.get(key);
         
-        const transactions = await transactionsCollection.find({userId: sessions.userId}).toArray();
-        
-        res.send({transactions, user});
+
+        if(cachedInfos){
+            res.status(201).send(JSON.parse(cachedInfos))
+        } else {
+            const transactions = await transactionsCollection.find({userId: sessions.userId}).toArray();
+            redis.set(key, JSON.stringify(transactions))
+            res.send({transactions, user});
+        }
 
     } catch (err){
-        console.log(err);
-        res.status(500).send('Server not running');
+        console.log(err.message);
+        res.status(500).send(err.message);
     }
 };
